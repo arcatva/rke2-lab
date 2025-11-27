@@ -5,3 +5,4 @@
 tfplan
 config.yaml
 states/
+environments/test/kubeconfig.yaml

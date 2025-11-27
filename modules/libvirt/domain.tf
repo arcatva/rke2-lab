@@ -62,4 +62,28 @@ resource "libvirt_domain" "domains" {
 
   # Start the VM automatically
   running = true
+
+  provisioner "remote-exec" {
+    inline = [
+      <<-EOF
+      #!/bin/bash
+      cloud-init status --wait
+      if [ ! -f /tmp/rke2.yaml ]; then
+        echo "RKE2 config not found. This is a worker node."
+        echo "Exiting gracefully."
+        exit 0
+      fi
+      echo "RKE2 config found."
+      EOF
+    ]
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = file("~/.ssh/id_rsa")
+      host = var.rke2_server_ip
+    }
+  }
+  provisioner "local-exec" {
+    command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ubuntu@${var.rke2_server_ip}:/tmp/rke2.yaml ./kubeconfig.yaml || echo 'File not found, skipping download (likely a worker node).'"
+  }
 }

@@ -1,18 +1,22 @@
 #cloud-config
 
-disable_root: false
-
-chpasswd:
-  list: |
-    root:${password}
-  expire: false
 
 ssh_pwauth: false
+
+apt:
+  sources:
+    helm-stable-debian:
+      source: "deb https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+      keyid: DDF78C3E6EBB2D2CC223C95Cs
 
 packages:
   - openssh-server
   - openssh-client
   - net-tools
+  - ipvsadm
+  - curl
+  - gpg
+  - helm
 
 timezone: UTC
 
@@ -27,8 +31,20 @@ write_files:
     owner: root:root
     permissions: '0600'
     content: |
+
+      # RKE2 Configuration for all nodes
       token: "${rke2_cluster_token}"
-      %{ if role != "server" }
+      kube-proxy-arg:
+        - proxy-mode=ipvs
+        - ipvs-strict-arp=true    
+
+      # RKE2 Configuration for server
+      %{ if role == "server" }
+      ingress-controller: none
+      %{ endif }
+
+      # RKE2 Configuration for agent
+      %{ if role == "agent" }
       server: "https://${rke2_server_ip}:9345"
       %{ endif }
   
@@ -38,6 +54,13 @@ write_files:
       if [ "${role}" = "server" ]; then
         curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="server" sh -
         systemctl enable --now rke2-server.service
+        echo "RKE2 server installed and started"
+        echo "Copying kubeconfig to /tmp/rke2.yaml"
+        cp /etc/rancher/rke2/rke2.yaml /tmp/rke2.yaml
+        chown ubuntu:ubuntu /tmp/rke2.yaml
+        chmod 644 /tmp/rke2.yaml
+        sed -i "s/127.0.0.1/${rke2_server_ip}/g" /tmp/rke2.yaml
+        echo "Kubeconfig copied to /tmp/rke2.yaml"
       else
         mkdir -p /etc/rancher/rke2/
         curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh -
@@ -50,6 +73,29 @@ write_files:
     content: |
       export KUBECONFIG="/etc/rancher/rke2/rke2.yaml"
       export PATH="$PATH:/var/lib/rancher/rke2/bin/"
-      
+    owner: root:root
+    permissions: '0644'
+  
+  - path: /etc/modules-load.d/ipvs.conf
+    content: |
+      ip_vs
+      ip_vs_rr
+      ip_vs_wrr
+      ip_vs_lc
+      ip_vs_wlc
+      ip_vs_lblc
+      ip_vs_lblcr
+      ip_vs_sh
+      ip_vs_dh
+      ip_vs_sed
+      ip_vs_nq
+      nf_conntrack
+    owner: root:root
+    permissions: '0644'
+
 runcmd:
-  - 'bash /tmp/install_rke2.sh'
+  - sudo modprobe -a $(cat /etc/modules-load.d/ipvs.conf)
+  - source /etc/profile.d/rke2-env.sh
+  - bash /tmp/install_rke2.sh
+
+#  - 'kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml'
