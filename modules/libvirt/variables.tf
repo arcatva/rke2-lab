@@ -9,20 +9,7 @@ variable "vm_configs" {
     password            = string
     role                = string
     ssh_authorized_keys = optional(list(string), [])
-    ssh_private_key     = optional(string, "")
   }))
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key content"
-  type        = string
-  default     = ""
-}
-
-variable "ssh_private_key" {
-  description = "SSH private key content"
-  type        = string
-  default     = ""
 }
 
 

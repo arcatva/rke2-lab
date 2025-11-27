@@ -54,21 +54,20 @@ resource "libvirt_volume" "cloudinit-volumes" {
 resource "libvirt_cloudinit_disk" "cloudinit-disks" {
   for_each = var.vm_configs
   name     = "${each.key}-cloudinit"
-  user_data = templatefile("${path.module}/templates/user_data.yaml", {
+  user_data = templatefile("${path.module}/templates/user_data.yaml.tftpl", {
     password           = each.value.password
     role               = each.value.role
     rke2_server_ip     = var.rke2_server_ip
     rke2_cluster_token = random_password.rke2_cluster_token.result
-    ssh_public_key     = var.ssh_public_key
-    ssh_private_key    = indent(6, var.ssh_private_key)
+    ssh_authorized_keys     = each.value.ssh_authorized_keys
   })
 
-  meta_data = templatefile("${path.module}/templates/meta_data.yaml", {
+  meta_data = templatefile("${path.module}/templates/meta_data.yaml.tftpl", {
     instance_id    = each.key
     local_hostname = each.key
   })
 
-  network_config = templatefile("${path.module}/templates/network_config.yaml", {
+  network_config = templatefile("${path.module}/templates/network_config.yaml.tftpl", {
     ip      = each.value.ip
     gateway = each.value.gateway
   })

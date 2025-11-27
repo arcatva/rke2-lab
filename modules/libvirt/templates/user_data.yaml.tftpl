@@ -17,20 +17,11 @@ packages:
 timezone: UTC
 
 ssh_authorized_keys:
-  - ${ssh_public_key}
+%{ for key in ssh_authorized_keys ~}
+  - ${key}
+%{ endfor ~}
 
 write_files:
-  - path: /root/.ssh/id_rsa
-    content: |
-      ${ssh_private_key}
-    owner: root:root
-    permissions: '0600'
-
-  - path: /root/.ssh/id_rsa.pub
-    content: |
-      ${ssh_public_key}
-    owner: root:root
-    permissions: '0600'
 
   - path: /etc/rancher/rke2/config.yaml
     owner: root:root
