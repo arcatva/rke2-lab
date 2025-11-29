@@ -3,27 +3,16 @@
 
 ssh_pwauth: false
 
-apt:
-  sources:
-    helm-stable-debian:
-      source: "deb https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
-      keyid: DDF78C3E6EBB2D2CC223C95Cs
-
 packages:
   - openssh-server
   - openssh-client
   - net-tools
   - ipvsadm
-  - curl
-  - gpg
-  - helm
 
 timezone: UTC
 
 ssh_authorized_keys:
-%{ for key in ssh_authorized_keys ~}
-  - ${key}
-%{ endfor ~}
+  - ${ssh_public_key}
 
 write_files:
 

@@ -59,7 +59,7 @@ resource "libvirt_cloudinit_disk" "cloudinit-disks" {
     role               = each.value.role
     rke2_server_ip     = var.rke2_server_ip
     rke2_cluster_token = random_password.rke2_cluster_token.result
-    ssh_authorized_keys     = each.value.ssh_authorized_keys
+    ssh_public_key     = file(var.ssh_config.ssh_public_key_path)
   })
 
   meta_data = templatefile("${path.module}/templates/meta_data.yaml.tftpl", {

@@ -63,7 +63,10 @@ resource "libvirt_domain" "domains" {
   # Start the VM automatically
   running = true
 
-  provisioner "remote-exec" {
+}
+
+resource "null_resource" "kubeconfig" {
+    provisioner "remote-exec" {
     inline = [
       <<-EOF
       #!/bin/bash
@@ -79,11 +82,18 @@ resource "libvirt_domain" "domains" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.ssh_config.ssh_private_key_path)
       host = var.rke2_server_ip
     }
   }
   provisioner "local-exec" {
-    command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ubuntu@${var.rke2_server_ip}:/tmp/rke2.yaml ./kubeconfig.yaml || echo 'File not found, skipping download (likely a worker node).'"
+    command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${var.ssh_config.ssh_private_key_path} ubuntu@${var.rke2_server_ip}:/tmp/rke2.yaml ./kubeconfig.yaml"
   }
+
+  depends_on = [ libvirt_domain.domains ]
+}
+
+output "kubeconfig_path" {
+  value = abspath("./kubeconfig.yaml")
+  depends_on = [ null_resource.kubeconfig ]
 }

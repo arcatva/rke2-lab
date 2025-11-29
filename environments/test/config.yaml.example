@@ -1,3 +1,7 @@
+ssh_config:
+  ssh_public_key_path: "~/.ssh/id_rsa.pub"
+  ssh_private_key_path: "~/.ssh/id_rsa"
+
 test-1:
   memory: 12
   vcpu: 2
@@ -6,8 +10,6 @@ test-1:
   disk: 50
   password: "testme"
   role: "server"
-  ssh_authorized_keys:
-    - "ssh-rsa AA....."
 
 test-2:
   memory: 8
@@ -17,5 +19,12 @@ test-2:
   disk: 50
   password: "testme"
   role: "agent"
-  ssh_authorized_keys:
-    - "ssh-rsa AA....."
+
+test-3:
+  memory: 8
+  vcpu: 2
+  ip: "192.168.0.203"
+  gateway: "192.168.0.1"
+  disk: 50
+  password: "testme"
+  role: "agent"

@@ -8,10 +8,15 @@ variable "vm_configs" {
     disk                = number
     password            = string
     role                = string
-    ssh_authorized_keys = optional(list(string), [])
   }))
 }
 
+variable "ssh_config" {
+  type = object({
+    ssh_public_key_path = string
+    ssh_private_key_path = string
+  })
+}
 
 variable "rke2_server_ip" {
   description = "RKE2 server IP address"
