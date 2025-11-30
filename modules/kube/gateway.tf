@@ -1,8 +1,5 @@
-
 resource "kubectl_manifest" "rancher_gateway" {
-
     depends_on = [ helm_release.rancher, kubectl_manifest.rancher_certificate ]
-    
     yaml_body = <<YAML
       apiVersion: networking.istio.io/v1alpha3
       kind: Gateway
@@ -26,9 +23,7 @@ resource "kubectl_manifest" "rancher_gateway" {
 }
 
 resource "kubectl_manifest" "rancher_virtual_service" {
-
     depends_on = [ kubectl_manifest.rancher_gateway ]
-    
     yaml_body = <<YAML
       apiVersion: networking.istio.io/v1alpha3
       kind: VirtualService

@@ -8,6 +8,7 @@ variable "vm_configs" {
     disk                = number
     password            = string
     role                = string
+    dns_servers        = list(string)
   }))
 }
 

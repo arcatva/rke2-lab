@@ -1,0 +1,41 @@
+ssh_config = {
+  ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+  ssh_private_key_path = "~/.ssh/id_rsa"
+}
+
+metallb_ip_range = "192.168.0.240-192.168.0.250"
+
+vm_configs = {
+  test-1 = {
+    memory  = 12
+    vcpu    = 2
+    ip      = "192.168.0.201"
+    gateway = "192.168.0.1"
+    disk    = 50
+    password = "testme"
+    role     = "server"
+    dns_servers = ["8.8.8.8", "8.8.4.4"]
+  }
+
+  test-2 = {
+    memory  = 8
+    vcpu    = 2
+    ip      = "192.168.0.202"
+    gateway = "192.168.0.1"
+    disk    = 50
+    password = "testme"
+    role     = "agent"
+    dns_servers = ["8.8.8.8", "8.8.4.4"]
+  }
+
+  test-3 = {
+    memory  = 8
+    vcpu    = 2
+    ip      = "192.168.0.203"
+    gateway = "192.168.0.1"
+    disk    = 50
+    password = "testme"
+    role     = "agent"
+    dns_servers = ["8.8.8.8", "8.8.4.4"]
+  }
+}

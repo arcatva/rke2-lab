@@ -70,6 +70,7 @@ resource "libvirt_cloudinit_disk" "cloudinit-disks" {
   network_config = templatefile("${path.module}/templates/network_config.yaml.tftpl", {
     ip      = each.value.ip
     gateway = each.value.gateway
+    dns_servers = each.value.dns_servers
   })
   depends_on = [libvirt_pool.pool]
 }

@@ -6,13 +6,11 @@ resource "helm_release" "cert_manager" {
     namespace = kubernetes_namespace.cert_manager.metadata[0].name
     set = [
         {
-        name  = "installCRDs"
+        name  = "crds.enabled"
         value = "true"
         }
     ]
 }
-
-
 
 resource "helm_release" "istio" {
     name       = "istio"
@@ -20,7 +18,6 @@ resource "helm_release" "istio" {
     chart      = "base"
     version    = "1.28.0"
     namespace = kubernetes_namespace.istio_system.metadata[0].name
-    
     set = [{
         name ="defaultRevision"
         value = "default"
@@ -59,7 +56,6 @@ resource "helm_release" "rancher" {
     chart      = "rancher"
     version    = "2.13.0"
     namespace = kubernetes_namespace.cattle_system.metadata[0].name
-
     set = [ 
         {
             name = "hostname"

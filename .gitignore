@@ -3,6 +3,6 @@
 *.tfstate.*
 .terraform.lock.hcl
 tfplan
-config.yaml
+terraform.tfvars
 states/
 environments/test/kubeconfig.yaml
