@@ -3,35 +3,39 @@ ssh_config = {
   ssh_private_key_path = "~/.ssh/id_rsa"
 }
 
+network_configs = {
+  bridge = "virbr0"
+  mode = "bridge"
+}
+
 metallb_ip_range = "192.168.0.240-192.168.0.250"
+rke2_server_ip = "192.168.0.201"
 
 vm_configs = {
   prod-1 = {
     memory  = 12
     vcpu    = 2
-    ip      = "192.168.0.201"
+    ip      = "192.168.0.201/24"
     gateway = "192.168.0.1"
     disk    = 50
     password = "testme"
     role     = "server"
     dns_servers = ["8.8.8.8", "8.8.4.4"]
   }
-
   prod-2 = {
     memory  = 8
     vcpu    = 2
-    ip      = "192.168.0.202"
+    ip      = "192.168.0.202/24"
     gateway = "192.168.0.1"
     disk    = 50
     password = "testme"
     role     = "agent"
     dns_servers = ["8.8.8.8", "8.8.4.4"]
   }
-
   prod-3 = {
     memory  = 8
     vcpu    = 2
-    ip      = "192.168.0.203"
+    ip      = "192.168.0.203/24"
     gateway = "192.168.0.1"
     disk    = 50
     password = "testme"
