@@ -40,13 +40,10 @@ resource "libvirt_domain" "domains" {
       }
     ]
 
-    # Network interface on default network (DHCP)
     interfaces = [
       {
-        type  = "bridge"
-        model = "virtio"
         source = {
-          bridge = "virbr0"
+          network = libvirt_network.rke2_network.name
         }
       }
     ]
