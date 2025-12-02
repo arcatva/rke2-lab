@@ -3,8 +3,12 @@ ssh_config = {
   ssh_private_key_path = "~/.ssh/id_rsa"
 }
 
-metallb_ip_range = "192.168.0.240-192.168.0.250"
+network_configs = {
+  bridge = "virbr0"
+  mode = "bridge"
+}
 
+metallb_ip_range = "192.168.0.240-192.168.0.250"
 rke2_server_ip = "192.168.0.201"
 
 vm_configs = {
@@ -18,7 +22,6 @@ vm_configs = {
     role     = "server"
     dns_servers = ["8.8.8.8", "8.8.4.4"]
   }
-
   test-2 = {
     memory  = 8
     vcpu    = 2
@@ -29,7 +32,6 @@ vm_configs = {
     role     = "agent"
     dns_servers = ["8.8.8.8", "8.8.4.4"]
   }
-
   test-3 = {
     memory  = 8
     vcpu    = 2

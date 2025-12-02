@@ -42,8 +42,10 @@ resource "libvirt_domain" "domains" {
 
     interfaces = [
       {
+        type = "network"
+        model = "virtio"
         source = {
-          network = libvirt_network.rke2_network.name
+            network = libvirt_network.rke2_network.name
         }
       }
     ]

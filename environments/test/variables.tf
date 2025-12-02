@@ -11,7 +11,6 @@ variable "vm_configs" {
     password            = string
     role                = string
     dns_servers        = list(string)
-    network_type      = string
   }))
 }
 
@@ -32,15 +31,15 @@ variable "network_configs" {
   type = object({
     mode    = string
     bridge  = optional(string)
-    subnet  = string
-    netmask = string
+    subnet  = optional(string)
+    prefix  = optional(number)
   })
 
   default = {
     mode    = "nat"
     bridge  = null
     subnet  = "192.168.122.0"
-    netmask = "255.255.255.0"
+    prefix = 24
   }
 }
 
