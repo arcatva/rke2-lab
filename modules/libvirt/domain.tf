@@ -42,10 +42,12 @@ resource "libvirt_domain" "domains" {
 
     interfaces = [
       {
-        type = "network"
+        type = libvirt_network.rke2_network.mode
         model = "virtio"
+
         source = {
-            network = libvirt_network.rke2_network.name
+            bridge = libvirt_network.rke2_network.mode == "bridge"? libvirt_network.rke2_network.bridge : null
+            network = libvirt_network.rke2_network.mode == "network"? libvirt_network.rke2_network.name : null
         }
       }
     ]

@@ -36,6 +36,18 @@ resource "kubectl_manifest" "rancher_virtual_service" {
         gateways:
         - ${kubernetes_namespace.istio_ingress.metadata[0].name}/${kubectl_manifest.rancher_gateway.name}
         http:
+        - match:
+          - uri:
+              prefix: /longhorn
+          rewrite:
+            uri: /
+          route:
+          - destination:
+              # Assuming standard Longhorn service name and namespace. 
+              # Adjust 'longhorn-frontend' and 'longhorn-system' if yours differ.
+              host: longhorn-frontend.longhorn-system.svc.cluster.local
+              port:
+                number: 80
         - route:
           - destination:
               host: rancher.${kubernetes_namespace.cattle_system.metadata[0].name}.svc.cluster.local

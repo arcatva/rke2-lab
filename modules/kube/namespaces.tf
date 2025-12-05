@@ -28,3 +28,9 @@ resource "kubernetes_namespace" "cert_manager" {
     name = "cert-manager"
   } 
 }
+
+resource "kubernetes_namespace" "longhorn_system" {
+  metadata {
+    name = "longhorn-system"
+  } 
+}
