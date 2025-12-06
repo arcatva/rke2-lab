@@ -42,12 +42,12 @@ resource "libvirt_domain" "domains" {
 
     interfaces = [
       {
-        type = libvirt_network.rke2_network.mode
+        type  = libvirt_network.rke2_network.mode
         model = "virtio"
 
         source = {
-            bridge = libvirt_network.rke2_network.mode == "bridge"? libvirt_network.rke2_network.bridge : null
-            network = libvirt_network.rke2_network.mode == "network"? libvirt_network.rke2_network.name : null
+          bridge  = libvirt_network.rke2_network.mode == "bridge" ? libvirt_network.rke2_network.bridge : null
+          network = libvirt_network.rke2_network.mode == "network" ? libvirt_network.rke2_network.name : null
         }
       }
     ]
@@ -67,7 +67,7 @@ resource "libvirt_domain" "domains" {
 }
 
 resource "null_resource" "kubeconfig" {
-    provisioner "remote-exec" {
+  provisioner "remote-exec" {
     inline = [
       <<-EOF
       #!/bin/bash
@@ -81,20 +81,20 @@ resource "null_resource" "kubeconfig" {
       EOF
     ]
     connection {
-      type = "ssh"
-      user = "ubuntu"
+      type        = "ssh"
+      user        = "ubuntu"
       private_key = file(var.ssh_config.ssh_private_key_path)
-      host = var.rke2_server_ip
+      host        = var.rke2_server_ip
     }
   }
   provisioner "local-exec" {
     command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${var.ssh_config.ssh_private_key_path} ubuntu@${var.rke2_server_ip}:/tmp/rke2.yaml ./kubeconfig.yaml"
   }
 
-  depends_on = [ libvirt_domain.domains ]
+  depends_on = [libvirt_domain.domains]
 }
 
 output "kubeconfig_path" {
-  value = abspath("./kubeconfig.yaml")
-  depends_on = [ null_resource.kubeconfig ]
+  value      = abspath("./kubeconfig.yaml")
+  depends_on = [null_resource.kubeconfig]
 }

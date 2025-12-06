@@ -39,6 +39,7 @@ resource "helm_release" "metallb" {
     chart      = "metallb"
     version = "0.15.2"
     namespace = kubernetes_namespace.metallb_system.metadata[0].name
+    timeout = 600
 }
 
 resource "helm_release" "istio_ingress" {
@@ -71,6 +72,7 @@ resource "helm_release" "rancher" {
         }
     ]
     depends_on = [ helm_release.istio_ingress ]
+    timeout = 600
 }
 
 
@@ -80,4 +82,32 @@ resource "helm_release" "longhorn" {
     chart      = "longhorn"
     version    = "1.10.1"
     namespace = kubernetes_namespace.longhorn_system.metadata[0].name
+    set = [ 
+        {
+            name  = "persistence.defaultClassReplicaCount"
+            value = "2"
+        } 
+    ]
+    timeout = 600
+}
+
+resource "helm_release" "argocd" {
+    name = "argocd"
+    repository = "https://argoproj.github.io/argo-helm"
+    chart      = "argo-cd"
+    version    = "9.1.6"
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+
+    set = [ 
+        {
+            name = "global.domain"
+            value = "argocd.lab"
+        },
+        {
+            name  = "configs.params.server\\.insecure"
+            value = "true"
+        }
+
+    ]
+    timeout = 600
 }

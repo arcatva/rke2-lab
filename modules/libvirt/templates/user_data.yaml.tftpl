@@ -3,11 +3,16 @@
 
 ssh_pwauth: false
 
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
 packages:
   - openssh-server
   - openssh-client
   - net-tools
   - ipvsadm
+  - nfs-common
 
 timezone: UTC
 

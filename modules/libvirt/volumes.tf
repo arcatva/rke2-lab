@@ -19,6 +19,10 @@ resource "libvirt_volume" "volumes" {
     format = "qcow2"
   }
   depends_on = [libvirt_pool.pool, libvirt_volume.ubuntu_base]
+
+  lifecycle {
+    ignore_changes = [capacity]
+  }
 }
 
 
@@ -68,8 +72,8 @@ resource "libvirt_cloudinit_disk" "cloudinit-disks" {
   })
 
   network_config = templatefile("${path.module}/templates/network_config.yaml.tftpl", {
-    ip      = each.value.ip 
-    gateway = each.value.gateway
+    ip          = each.value.ip
+    gateway     = each.value.gateway
     dns_servers = each.value.dns_servers
   })
   depends_on = [libvirt_pool.pool]
