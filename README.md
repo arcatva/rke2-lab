@@ -34,9 +34,18 @@ This project provides an infrastructure-as-code (IaC) lab environment for deploy
 │   │       ├── meta_data.yaml
 │   │       ├── network_config.yaml
 │   │       └── user_data.yaml
-│   └── rke2/                 # RKE2 cluster provisioning module
+│   ├── rke2/                 # RKE2 cluster provisioning module
+│   │   ├── main.tf
+│   │   └── versions.tf
+│   └── kube/                 # Kubernetes management module
+│       ├── certificates.tf
+│       ├── charts.tf
 │       ├── main.tf
-│       └── versions.tf
+│       ├── metallb.tf
+│       ├── namespaces.tf
+│       ├── variables.tf
+│       ├── versions.tf
+│       └── virtual_services.tf
 └── README.md
 ```
 
@@ -78,10 +87,25 @@ This project provides an infrastructure-as-code (IaC) lab environment for deploy
 ## Modules
 - `modules/libvirt`: Handles VM creation, storage, and networking using libvirt.
 - `modules/rke2`: Provisions and configures RKE2 clusters on the created VMs.
+- `modules/kube`: Manages Kubernetes resources and Helm chart deployments, including:
+  - **Cert-Manager**: Certificate management for Kubernetes
+  - **Istio**: Service mesh with gateway configuration
+  - **MetalLB**: Bare metal load balancer for Kubernetes
+  - **Rancher**: Kubernetes cluster management platform
+  - **Longhorn**: Distributed block storage system
+  - **ArgoCD**: GitOps continuous deployment
+  - **Namespaces & Certificates**: Custom namespace and certificate management
+  - **Virtual Services**: Istio virtual service configurations
 
 ## Configuration
 - Edit `config.yaml` in your environment directory to customize VM specs, network settings, and RKE2 options.
 - Adjust `backend.tf` to change Terraform state storage (local or remote).
+- Configure Kubernetes resources via the `kube` module for:
+  - Ingress and load balancing (Istio + MetalLB)
+  - Storage backends (Longhorn)
+  - Certificate management (Cert-Manager)
+  - CI/CD pipelines (ArgoCD)
+  - Cluster management (Rancher)
 
 ## State Management
 - State files are stored in the `states/` directory by default for the test environment.
