@@ -53,11 +53,6 @@ resource "libvirt_volume" "cloudinit-volumes" {
   }
   depends_on = [libvirt_pool.pool, libvirt_cloudinit_disk.cloudinit-disks]
   
-  lifecycle {
-    ignore_changes = [
-      create,      
-    ]
-  }
 }
 
 
@@ -83,6 +78,8 @@ resource "libvirt_cloudinit_disk" "cloudinit-disks" {
     dns_servers = each.value.dns_servers
   })
   depends_on = [libvirt_pool.pool]
+
+
 }
 
 resource "random_password" "rke2_cluster_token" {
