@@ -52,6 +52,12 @@ resource "libvirt_volume" "cloudinit-volumes" {
     }
   }
   depends_on = [libvirt_pool.pool, libvirt_cloudinit_disk.cloudinit-disks]
+  
+  lifecycle {
+    ignore_changes = [
+      create,      
+    ]
+  }
 }
 
 
